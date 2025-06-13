@@ -1,21 +1,49 @@
-import { speechToText } from "infrastructure/elevenLabs";
+import { Id, MessageRole, ModelProvider } from "entities";
+import { ChatCompletionPort } from "interfaces";
+import { chatCompletion as openAiChatCompletion } from "infrastructure/openAi";
+import { chatCompletion as anthropicChatCompletion } from "infrastructure/anthropic";
+import { findUniqueByModelId } from "infrastructure/prisma";
 
-export enum SpeechToTextModel {
-  ElevenLabsScribeV1 = "scribe_v1",
-  ElevenLabsScribeV1Experimental = "scribe_v1_experimental",
-}
+const chatCompletionByModelProvider = (
+  modelProvider: ModelProvider
+): ChatCompletionPort => {
+  if (modelProvider === ModelProvider.OpenAi) {
+    return openAiChatCompletion;
+  } else if (modelProvider === ModelProvider.Anthropic) {
+    return anthropicChatCompletion;
+  } else {
+    throw new Error(`Unknown model provider: ${modelProvider}`);
+  }
+};
 
 export type StreamMessageArgs = {
-  model: SpeechToTextModel;
-  audioBlob: Blob;
+  conversationId: Id;
+  modelId: Id;
+  text: string;
 };
 
 export const streamMessage = async ({
-  model,
-  audioBlob,
+  // conversationId,
+  modelId,
+  text,
 }: StreamMessageArgs) => {
-  console.log("🚀 ~ streamMessage ~ model, speechBlob:", model, audioBlob);
-  const transcript = await speechToText({ model, audioBlob });
-  console.log("🚀 ~ transcript:", transcript);
-  return transcript;
+  const model = await findUniqueByModelId(modelId);
+
+  if (!model) {
+    throw new Error(`Model with id ${modelId} not found`);
+  }
+
+  const chatCompletionFn = chatCompletionByModelProvider(model.provider);
+
+  const chatCompletionResponse = await chatCompletionFn({
+    modelId,
+    messages: [
+      {
+        role: MessageRole.User,
+        text,
+      },
+    ],
+  });
+
+  return chatCompletionResponse;
 };

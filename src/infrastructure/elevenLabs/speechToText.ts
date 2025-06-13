@@ -1,4 +1,4 @@
-import { SpeechToTextPort } from "interfaces/inbound";
+import { SpeechToTextPort } from "interfaces";
 import { elevenlabsClient } from "./elevenLabsClient";
 
 export const speechToText: SpeechToTextPort = async ({ model, audioBlob }) => {

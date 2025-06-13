@@ -1,17 +1,12 @@
-import { Conversation } from "entities/conversation";
+import { Conversation } from "entities";
+import { createConversation as createConversationPrisma } from "infrastructure/prisma";
 
 export type CreateConversationArgs = {
   name: string;
 };
 
 export const createConversation = async (
-  args: CreateConversationArgs
+  createConversationArgs: CreateConversationArgs
 ): Promise<Conversation> => {
-  const currentDate = new Date().toISOString();
-  return {
-    id: Math.random().toString(),
-    name: args.name,
-    createdAt: currentDate,
-    updatedAt: currentDate,
-  };
+  return createConversationPrisma(createConversationArgs);
 };

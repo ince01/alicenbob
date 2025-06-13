@@ -25,37 +25,3 @@ export interface Message extends AuditableEntity {
   audioTranscript?: string;
   metadata?: Record<string, unknown>;
 }
-
-// export const x = {
-//   conversationId: "con_1",
-//   role: "user",
-//   latestMessageId: "mess_2",
-//   messages: [
-//     {
-//       id: "mess_1",
-//       parentId: null,
-//       author: "user",
-//       authorId: "usr_1",
-//       role: "user",
-//       contents: [
-//         {
-//           type: "text",
-//           text: "Hello, world!",
-//         },
-//       ],
-//     },
-//     {
-//       id: "mess_2",
-//       parentId: "mess_1",
-//       author: "ai-model",
-//       authorid: "claude-3-7-sonnet-20250219",
-//       role: "assistant",
-//       contents: [
-//         {
-//           type: "text",
-//           text: "Hi there!",
-//         },
-//       ],
-//     },
-//   ],
-// };

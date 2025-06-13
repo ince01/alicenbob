@@ -1,10 +1,10 @@
-import { ChatCompletionPort } from "interfaces/inbound";
+import { ChatCompletionPort } from "interfaces";
 import { ResponseInput } from "openai/resources/responses/responses";
 import { openAiClient } from "./openAiClient";
 import { MessageRole } from "entities";
 
 export const chatCompletion: ChatCompletionPort = async ({
-  model,
+  modelId,
   messages,
 }) => {
   /**
@@ -19,12 +19,12 @@ export const chatCompletion: ChatCompletionPort = async ({
     }));
 
   const response = await openAiClient.responses.create({
-    model,
+    model: modelId,
     input,
   });
 
   return {
-    model,
+    model: modelId,
     message: {
       role: MessageRole.Assistant,
       text: response.output_text,

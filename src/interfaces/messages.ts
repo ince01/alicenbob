@@ -1,11 +1,11 @@
-import { Message } from "entities";
+import { Id, Message } from "entities";
 
 export type ChatCompletionMessageInput = Required<
   Pick<Message, "role" | "text">
 >;
 
 export type ChatCompletionArgs = {
-  model: string;
+  modelId: Id;
   messages: ChatCompletionMessageInput[];
 };
 
@@ -14,7 +14,7 @@ export type ChatCompletionMessageOutput = Required<
 >;
 
 export type ChatCompletionOutput = {
-  model: string;
+  model: Id;
   message: ChatCompletionMessageOutput;
   usage: {
     totalTokens: number;

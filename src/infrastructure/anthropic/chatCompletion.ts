@@ -1,4 +1,4 @@
-import { ChatCompletionPort } from "interfaces/inbound";
+import { ChatCompletionPort } from "interfaces";
 import { MessageRole } from "entities";
 import {
   MessageParam,
@@ -8,7 +8,7 @@ import { anthropicClient } from "./anthropicClient";
 import { mapMessageRoleToAnthropicRole } from "./utils";
 
 export const chatCompletion: ChatCompletionPort = async ({
-  model,
+  modelId,
   messages,
 }) => {
   const system: TextBlockParam[] = messages
@@ -26,7 +26,7 @@ export const chatCompletion: ChatCompletionPort = async ({
     }));
 
   const createdMessage = await anthropicClient.messages.create({
-    model,
+    model: modelId,
     max_tokens: 4096, // Ref: https://docs.anthropic.com/en/docs/about-claude/models/overview#model-comparison-table
     system,
     messages: inputMessages,
@@ -41,16 +41,23 @@ export const chatCompletion: ChatCompletionPort = async ({
     ""
   );
 
+  const inputTokens =
+    createdMessage.usage.input_tokens +
+    (createdMessage.usage.cache_creation_input_tokens ?? 0) +
+    (createdMessage.usage.cache_read_input_tokens ?? 0);
+  const outputTokens = createdMessage.usage.output_tokens;
+  const totalTokens = inputTokens + outputTokens;
+
   return {
-    model,
+    model: modelId,
     message: {
       role: MessageRole.Assistant,
       text: outputText,
     },
     usage: {
-      totalTokens: 0,
-      inputTokens: 0,
-      outputTokens: 0,
+      totalTokens,
+      inputTokens,
+      outputTokens,
     },
   };
 };
