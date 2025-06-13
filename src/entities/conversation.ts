@@ -1,6 +1,7 @@
-import { AuditableEntity } from "./common";
+import { AuditableEntity, Id } from "./common";
 
 export interface Conversation extends AuditableEntity {
-  id: string;
+  id: Id;
   name: string;
+  latestMessageId: Id;
 }

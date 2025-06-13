@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@anthropic-ai/sdk@^0.54.0":
+  version "0.54.0"
+  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.54.0.tgz#5d4fec666f2ae75f213cc5600ec9f92c9f026e11"
+  integrity sha512-xyoCtHJnt/qg5GG6IgK+UJEndz8h8ljzt/caKXmq3LfBF81nC/BW6E4x2rOWCZcvsLyVW+e8U5mtIr6UCE/kJw==
+
 "@cspotcode/source-map-support@^0.8.0":
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz#00629c35a688e05a88b1cda684fb9d5e73f000a1"
@@ -141,6 +146,24 @@
   dependencies:
     "@eslint/core" "^0.14.0"
     levn "^0.4.1"
+
+"@huggingface/inference@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.0.4.tgz#84b77252d08045bb6f979b103cb1d6be6a353216"
+  integrity sha512-Pz0l435mmlQNNOvIBqoDdG+ckdg9WdERFa8AiBnFX7ejY9DWxU31wr0sY8v9l+bsrmk6rZ3BqIXOlf5wjJf8Uw==
+  dependencies:
+    "@huggingface/jinja" "^0.5.0"
+    "@huggingface/tasks" "^0.19.13"
+
+"@huggingface/jinja@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.0.tgz#0da65deb98798cd24ea42ad13f6df224ce23f443"
+  integrity sha512-Ptc03/jGRiYRoi0bUYKZ14MkDslsBRT24oxmsvUlfYrvQMldrxCevhPnT+hfX8awKTT8/f/0ZBBWldoeAcMHdQ==
+
+"@huggingface/tasks@^0.19.13":
+  version "0.19.13"
+  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.13.tgz#433d8b4b28236bfe5e973e8c558e562f6598e524"
+  integrity sha512-OzIvUQNtvcTCDvGcbeav8+fZPDvpwBOFRlXxIuH8Vk7jHVJEFxzYzfRJ+1fAGmEBaRNueI2CcnbR97Sc6meSKA==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"
@@ -2002,6 +2025,11 @@ onetime@^5.1.2:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
+
+openai@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-5.3.0.tgz#7d4d48f1f0beb011f66fd0c291749e35465c4b52"
+  integrity sha512-VIKmoF7y4oJCDOwP/oHXGzM69+x0dpGFmN9QmYO+uPbLFOmmnwO+x1GbsgUtI+6oraxomGZ566Y421oYVu191w==
 
 optionator@^0.9.3:
   version "0.9.4"
