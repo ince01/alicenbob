@@ -3,7 +3,7 @@ import { AuditableEntity, Id } from "./common";
 export enum MessageAuthor {
   System = "system", // Current system
   User = "user", // Typically is the human user
-  Model = "ai-model", // AI model like Claude Sonnet
+  Model = "llm-model", // AI model like Claude Sonnet
   Application = "application", // The external application
 }
 

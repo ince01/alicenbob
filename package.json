@@ -8,6 +8,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.54.0",
     "@elevenlabs/elevenlabs-js": "^2.1.0",
+    "@google/genai": "^1.5.1",
     "@huggingface/inference": "^4.0.4",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

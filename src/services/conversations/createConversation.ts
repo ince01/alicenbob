@@ -7,6 +7,11 @@ export type CreateConversationArgs = {
 
 export const createConversation = async (
   createConversationArgs: CreateConversationArgs
-): Promise<Conversation> => {
-  return createConversationPrisma(createConversationArgs);
+): Promise<Pick<Conversation, "id">> => {
+  const createdConversationId = await createConversationPrisma(
+    createConversationArgs
+  );
+  return {
+    id: createdConversationId,
+  };
 };

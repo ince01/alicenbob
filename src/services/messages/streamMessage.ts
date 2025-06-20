@@ -1,8 +1,22 @@
-import { Id, MessageRole, ModelProvider } from "entities";
+import {
+  ANNONYMOUS_USER_ID,
+  ExecutionStatus,
+  Id,
+  MessageAuthor,
+  MessageRole,
+  ModelProvider,
+} from "entities";
 import { ChatCompletionPort } from "interfaces";
 import { chatCompletion as openAiChatCompletion } from "infrastructure/openAi";
 import { chatCompletion as anthropicChatCompletion } from "infrastructure/anthropic";
-import { findUniqueByModelId } from "infrastructure/prisma";
+import {
+  createExecution,
+  createMessage,
+  findUniqueByConversationId,
+  findUniqueByModelId,
+  updateConversation,
+  updateExecutionStatus,
+} from "infrastructure/prisma";
 
 const chatCompletionByModelProvider = (
   modelProvider: ModelProvider
@@ -23,7 +37,7 @@ export type StreamMessageArgs = {
 };
 
 export const streamMessage = async ({
-  // conversationId,
+  conversationId,
   modelId,
   text,
 }: StreamMessageArgs) => {
@@ -33,8 +47,33 @@ export const streamMessage = async ({
     throw new Error(`Model with id ${modelId} not found`);
   }
 
-  const chatCompletionFn = chatCompletionByModelProvider(model.provider);
+  const conversation = await findUniqueByConversationId({ conversationId });
 
+  if (!conversation) {
+    throw new Error(`Conversation with id ${conversationId} not found`);
+  }
+
+  const createdExecutionId = await createExecution({
+    modelId,
+    status: ExecutionStatus.Running,
+    metadata: {},
+  });
+
+  const createdUserMessageId = await createMessage({
+    parentId: conversation.latestMessageId,
+    executionId: createdExecutionId,
+    role: MessageRole.User,
+    author: MessageAuthor.User,
+    authorId: ANNONYMOUS_USER_ID,
+    text,
+  });
+
+  await updateConversation({
+    id: conversationId,
+    latestMessageId: createdUserMessageId,
+  });
+
+  const chatCompletionFn = chatCompletionByModelProvider(model.provider);
   const chatCompletionResponse = await chatCompletionFn({
     modelId,
     messages: [
@@ -45,5 +84,32 @@ export const streamMessage = async ({
     ],
   });
 
-  return chatCompletionResponse;
+  await updateExecutionStatus({
+    id: createdExecutionId,
+    status: ExecutionStatus.Completed,
+  });
+
+  const createdModelMessageId = await createMessage({
+    executionId: createdExecutionId,
+    parentId: createdUserMessageId,
+    author: MessageAuthor.Model,
+    role: chatCompletionResponse.message.role,
+    text: chatCompletionResponse.message.text,
+  });
+
+  await updateConversation({
+    id: conversationId,
+    latestMessageId: createdModelMessageId,
+  });
+
+  return {
+    ...chatCompletionResponse,
+    message: {
+      id: createdModelMessageId,
+      parentId: createdUserMessageId,
+      executionId: createdExecutionId,
+      author: MessageAuthor.Model,
+      ...chatCompletionResponse.message,
+    },
+  };
 };
