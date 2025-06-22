@@ -28,7 +28,13 @@ export const createConversationHandler: RequestHandler<
   res.status(200).json(conversation);
 };
 
-export const getConversationByIdHandler: RequestHandler = async (req, res) => {
+type GetConversationByIdReqParams = {
+  conversationId: string;
+};
+
+export const getConversationByIdHandler: RequestHandler<
+  GetConversationByIdReqParams
+> = async (req, res) => {
   const conversationId = req.params.conversationId;
   const conversation = await getConversationById(conversationId);
   res.status(200).json(conversation);

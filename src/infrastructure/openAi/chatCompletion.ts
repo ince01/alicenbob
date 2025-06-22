@@ -1,4 +1,4 @@
-import { ChatCompletionPort } from "interfaces";
+import { ChatCompletionPort } from "ports";
 import { ResponseInput } from "openai/resources/responses/responses";
 import { openAiClient } from "./openAiClient";
 import { MessageRole } from "entities";

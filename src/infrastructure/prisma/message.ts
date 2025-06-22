@@ -2,7 +2,7 @@ import { Message, MessageAuthor, MessageRole } from "entities";
 import {
   CreateMessagePort,
   FindMessagesByConversationIdPort,
-} from "interfaces/persistence";
+} from "ports/persistence";
 import { _conversations } from "./conversation";
 
 export const _messages: Message[] = [

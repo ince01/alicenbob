@@ -1,7 +1,7 @@
 import {
   CreateExecutionPort,
   UpdateExecutionStatusPort,
-} from "interfaces/persistence";
+} from "ports/persistence";
 
 export const createExecution: CreateExecutionPort = async () => {
   return Math.random().toString();

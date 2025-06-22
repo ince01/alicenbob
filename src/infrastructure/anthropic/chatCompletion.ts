@@ -1,4 +1,4 @@
-import { ChatCompletionPort } from "interfaces";
+import { ChatCompletionPort } from "ports";
 import { MessageRole } from "entities";
 import {
   MessageParam,

@@ -3,7 +3,7 @@ import {
   CreateConversationPort,
   FindUniqueByConversationIdPort,
   UpdateConversationPort,
-} from "interfaces/persistence";
+} from "ports/persistence";
 
 export const _conversations: Conversation[] = [
   {

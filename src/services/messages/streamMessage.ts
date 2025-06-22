@@ -6,7 +6,7 @@ import {
   MessageRole,
   ModelProvider,
 } from "entities";
-import { ChatCompletionPort } from "interfaces";
+import { ChatCompletionPort } from "ports";
 import { chatCompletion as openAiChatCompletion } from "infrastructure/openAi";
 import { chatCompletion as anthropicChatCompletion } from "infrastructure/anthropic";
 import {

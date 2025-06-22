@@ -1,5 +1,5 @@
 import { Model, ModelProvider } from "entities";
-import { FindUniqueByModelIdPort } from "interfaces/persistence";
+import { FindUniqueByModelIdPort } from "ports/persistence";
 
 export const _models: Model[] = [
   {
