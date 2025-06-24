@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "infrastructure/opentelemetry";
 
 import http from "http";
 import express from "infrastructure/express";
