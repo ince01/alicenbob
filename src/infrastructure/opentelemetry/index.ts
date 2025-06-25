@@ -1,5 +1,8 @@
 import { NodeSDK } from "@opentelemetry/sdk-node";
-import { ConsoleSpanExporter } from "@opentelemetry/sdk-trace-node";
+// import { ConsoleSpanExporter } from "@opentelemetry/sdk-trace-node";
+// import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import {} from "@opentelemetry/exporter-trace-otlp-grpc";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import {
   detectResources,
@@ -29,7 +32,9 @@ export const resource = defaultResource.merge(
   })
 );
 
-export const traceExporter = new ConsoleSpanExporter();
+const traceExporter = new OTLPTraceExporter();
+
+// export const traceExporter = new ConsoleSpanExporter();
 
 const nodeAutoInstrumentations = getNodeAutoInstrumentations({
   "@opentelemetry/instrumentation-pino": {

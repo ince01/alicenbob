@@ -9,8 +9,10 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "paths": {
-      "infrastructure/*": ["./infrastructure/*"],
-      "*": ["./*"]
+      "entities/*": ["entities/*"],
+      "infrastructure/*": ["infrastructure/*"],
+      "ports/*": ["ports/*"],
+      "services/*": ["services/*"]
     }
   },
   "include": ["src"]
