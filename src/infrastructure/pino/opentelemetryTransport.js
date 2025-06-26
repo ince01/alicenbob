@@ -5,7 +5,9 @@ import { logs, SeverityNumber } from "@opentelemetry/api-logs";
 import {
   ConsoleLogRecordExporter,
   SimpleLogRecordProcessor,
+  BatchLogRecordProcessor,
 } from "@opentelemetry/sdk-logs";
+import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-grpc";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 
 export const DEFAULT_SEVERITY_MAP = {
@@ -28,13 +30,18 @@ export const DEFAULT_SEVERITY_NUMBER_MAP = {
 
 export default async function ({ resourceAttributes }) {
   const resource = resourceFromAttributes(resourceAttributes);
+  const processor =
+    process.env.NODE_ENV === "production"
+      ? new BatchLogRecordProcessor(new OTLPLogExporter())
+      : new SimpleLogRecordProcessor(new ConsoleLogRecordExporter());
+
   const loggerProvider = new LoggerProvider({
-    processors: [new SimpleLogRecordProcessor(new ConsoleLogRecordExporter())],
+    processors: [processor],
     resource,
   });
 
   logs.setGlobalLoggerProvider(loggerProvider);
-  const logger = logs.getLogger("default", "latest");
+  const logger = logs.getLogger("pino-opentelemetry-transport", "latest");
 
   return build(async function (source) {
     for await (const object of source) {

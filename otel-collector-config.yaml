@@ -16,15 +16,33 @@ exporters:
     endpoint: http://tempo:4317
     tls:
       insecure: true
-    headers:
-      "Content-Type": "application/x-protobuf"
+
+  # Export to Loki
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
 
   # Debug exporter for troubleshooting
   debug:
     verbosity: detailed
 
+processors:
+  batch:
+
+  redaction:
+    allow_all_keys: true
+    blocked_key_patterns:
+      - ".*token.*"
+      - ".*api_key.*"
+    hash_function: md5
+
 service:
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [batch]
       exporters: [otlp/tempo, debug]
+
+    logs:
+      receivers: [otlp]
+      processors: [batch, redaction]
+      exporters: [otlphttp/loki, debug]

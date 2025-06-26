@@ -1,14 +1,14 @@
 version: "3.8"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
-    env_file:
-      - .env
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3001:3001"
+  #   env_file:
+  #     - .env
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib
@@ -58,6 +58,15 @@ services:
     ports:
       - "9090:9090"
 
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki.yaml:/etc/loki/local-config.yaml
+      - ./loki-data:/tmp/loki
+
   grafana:
     image: grafana/grafana:11.0.0
     volumes:
@@ -69,3 +78,6 @@ services:
       - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
     ports:
       - "3000:3000"
+    depends_on:
+      - loki
+      - tempo

@@ -52,5 +52,5 @@ coverage/
 Thumbs.db
 
 # Container volumns for local
-
+loki-data
 tempo-data
