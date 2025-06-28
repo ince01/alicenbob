@@ -18,7 +18,7 @@ export const _models: Model[] = [
   },
 ];
 
-export const findUniqueByModelId: FindUniqueByModelIdPort = async (modelId) => {
-  const model = _models.find((model) => model.id === modelId);
+export const findUniqueByModelId: FindUniqueByModelIdPort = async modelId => {
+  const model = _models.find(model => model.id === modelId);
   return model || null;
 };

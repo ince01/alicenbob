@@ -1,6 +1,7 @@
 {
   "name": "alicebob-monorepo",
   "private": true,
+  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -8,17 +9,51 @@
   "scripts": {
     "dev": "yarn workspaces run dev",
     "build": "yarn workspaces run build",
-    "lint": "yarn workspaces run lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:check": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "yarn workspaces run test",
-    "clean": "rimraf apps/**/dist packages/**/dist"
+    "clean": "rimraf apps/**/dist packages/**/dist",
+    "prepare": "husky",
+    "commit": "cz",
+    "commit:auto": "node scripts/generate-commit-msg.js",
+    "commit:smart": "node scripts/smart-commit.js",
+    "commit:ai": "node scripts/ai-commit-generator.js"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.54.0",
+    "@eslint/js": "^9.30.0",
+    "@eslint/json": "^0.12.0",
+    "@eslint/markdown": "^6.4.0",
+    "@google/genai": "^1.5.1",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "dotenv": "^16.5.0",
+    "eslint": "^9.30.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "openai": "^5.3.0",
+    "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   },
   "engines": {
     "node": ">=22.0.0",
-    "yarn": ">=3.0.0"
+    "yarn": ">=4.0.0"
   },
   "packageManager": "yarn@4.9.2"
 }

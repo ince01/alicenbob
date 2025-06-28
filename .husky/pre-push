@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+
+# Run linting
+echo "📝 Checking code style..."
+yarn lint:check
+
+# Run tests if they exist
+if yarn test 2>/dev/null; then
+    echo "✅ Tests passed"
+else
+    echo "⚠️  No tests found or tests failed"
+fi
+
+echo "✅ Pre-push checks completed"

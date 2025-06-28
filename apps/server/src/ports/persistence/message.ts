@@ -11,7 +11,7 @@ export type FindMessagesByConversationIdArgs = {
 };
 
 export interface FindMessagesByConversationIdPort {
-  (findByConversationIdArgs: FindMessagesByConversationIdArgs): Promise<
-    Message[]
-  >;
+  (
+    findByConversationIdArgs: FindMessagesByConversationIdArgs
+  ): Promise<Message[]>;
 }
