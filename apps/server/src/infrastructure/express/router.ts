@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import {
   createConversationHandler,
   getConversationByIdHandler,
@@ -9,7 +9,7 @@ import { logger } from "infrastructure/pino";
 
 const router = Router();
 
-router.use((req, _res, next) => {
+const testLogger: RequestHandler = (_req, _res, next) => {
   const logData = {
     user: {
       id: "123",
@@ -24,7 +24,9 @@ router.use((req, _res, next) => {
   logger.info(logData, "Test logger with nested data");
 
   next();
-});
+};
+
+router.use(testLogger);
 
 router.get("/conversations/:conversationId", getConversationByIdHandler);
 

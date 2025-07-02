@@ -1,8 +1,5 @@
 import { NodeSDK } from "@opentelemetry/sdk-node";
-// import { ConsoleSpanExporter } from "@opentelemetry/sdk-trace-node";
-// import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import {} from "@opentelemetry/exporter-trace-otlp-grpc";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import {
   detectResources,
@@ -34,14 +31,15 @@ export const resource = defaultResource.merge(
 
 const traceExporter = new OTLPTraceExporter();
 
-// export const traceExporter = new ConsoleSpanExporter();
-
 const nodeAutoInstrumentations = getNodeAutoInstrumentations({
-  "@opentelemetry/instrumentation-pino": {
-    enabled: false,
+  "@opentelemetry/instrumentation-http": {
+    ignoreIncomingRequestHook: request => {
+      // For CORS preflight requests, we don't want to trace them
+      return request.method === "OPTIONS";
+    },
   },
   "@opentelemetry/instrumentation-express": {
-    enabled: false,
+    enabled: true,
   },
 });
 
