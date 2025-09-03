@@ -1,6 +1,5 @@
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import {
   detectResources,
   envDetector,
@@ -12,6 +11,20 @@ import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
+import {
+  BatchSpanProcessor,
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace-node";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
+import {
+  MeterProvider,
+  PeriodicExportingMetricReader,
+} from "@opentelemetry/sdk-metrics";
+import { metrics } from "@opentelemetry/api";
+import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
+import { RuntimeNodeInstrumentation } from "@opentelemetry/instrumentation-runtime-node";
 
 export const SERVICE_NAME = "alicenbob";
 export const SERVICE_VERSION = "latest";
@@ -29,25 +42,40 @@ export const resource = defaultResource.merge(
   })
 );
 
-const traceExporter = new OTLPTraceExporter();
+const spanProcessors =
+  process.env.NODE_ENV === "production"
+    ? [new BatchSpanProcessor(new OTLPTraceExporter())]
+    : [new SimpleSpanProcessor(new ConsoleSpanExporter())];
 
-const nodeAutoInstrumentations = getNodeAutoInstrumentations({
-  "@opentelemetry/instrumentation-http": {
-    ignoreIncomingRequestHook: request => {
-      // For CORS preflight requests, we don't want to trace them
-      return request.method === "OPTIONS";
-    },
-  },
-  "@opentelemetry/instrumentation-express": {
-    enabled: true,
-  },
+const metricReader = new PeriodicExportingMetricReader({
+  exporter: new OTLPMetricExporter(),
+  // Default is 60000ms (60 seconds). Set to 10 seconds for demonstrative purposes only.
+  exportIntervalMillis: 10000,
 });
+
+const meterProvider = new MeterProvider({
+  resource: resource,
+  readers: [metricReader],
+});
+
+metrics.setGlobalMeterProvider(meterProvider);
 
 const sdk = new NodeSDK({
   serviceName: SERVICE_NAME,
   resource,
-  traceExporter,
-  instrumentations: [nodeAutoInstrumentations],
+  spanProcessors,
+  instrumentations: [
+    new HttpInstrumentation({
+      ignoreIncomingRequestHook: request => {
+        // For CORS preflight requests, we don't want to trace them
+        return request.method === "OPTIONS";
+      },
+    }),
+    new ExpressInstrumentation(),
+    new RuntimeNodeInstrumentation({
+      monitoringPrecision: 5000,
+    }),
+  ],
 });
 
 sdk.start();
