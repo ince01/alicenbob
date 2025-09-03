@@ -1,7 +1,14 @@
 import { ErrorRequestHandler } from "express";
+import { logger } from "infrastructure/pino";
 
-export const errorHandler: ErrorRequestHandler = (error, _req, res) => {
+export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  logger.error(error, "Error in request");
+
   res.status(500).json({
-    error: error.message ?? "Internal Server Error",
+    message: "Internal Server Error",
   });
 };

@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { logger } from "infrastructure/pino";
 import {
   CreateConversationArgs,
   createConversation,
@@ -36,6 +37,8 @@ export const getConversationByIdHandler: RequestHandler<
   GetConversationByIdReqParams
 > = async (req, res) => {
   const conversationId = req.params.conversationId;
+  logger.info("Get conversation by id %s", conversationId);
+
   const conversation = await getConversationById(conversationId);
   res.status(200).json(conversation);
 };

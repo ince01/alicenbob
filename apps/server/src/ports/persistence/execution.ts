@@ -6,7 +6,10 @@ export interface CreateExecutionPort {
   (createExecutionArgs: CreateExecutionArgs): Promise<Id>;
 }
 
-export type UpdateExecutionArgs = Pick<Execution, "id" | "status">;
+export type UpdateExecutionArgs = Pick<
+  Execution,
+  "id" | "status" | "totalUsageTokens" | "inputTokens" | "outputTokens"
+>;
 
 export interface UpdateExecutionStatusPort {
   (updateExecutionArgs: UpdateExecutionArgs): Promise<void>;

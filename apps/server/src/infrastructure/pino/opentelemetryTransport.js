@@ -30,13 +30,17 @@ export const DEFAULT_SEVERITY_NUMBER_MAP = {
 
 export default async function ({ resourceAttributes }) {
   const resource = resourceFromAttributes(resourceAttributes);
-  const processor =
-    process.env.NODE_ENV === "production"
-      ? new BatchLogRecordProcessor(new OTLPLogExporter())
-      : new SimpleLogRecordProcessor(new ConsoleLogRecordExporter());
+
+  const processors = [
+    new SimpleLogRecordProcessor(new ConsoleLogRecordExporter()),
+  ];
+
+  if (process.env.NODE_ENV === "production") {
+    processors.push(new BatchLogRecordProcessor(new OTLPLogExporter()));
+  }
 
   const loggerProvider = new LoggerProvider({
-    processors: [processor],
+    processors,
     resource,
   });
 

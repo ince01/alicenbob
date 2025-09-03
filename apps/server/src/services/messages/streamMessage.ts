@@ -6,12 +6,13 @@ import {
   MessageRole,
   ModelProvider,
 } from "entities";
-import { ChatCompletionPort } from "ports";
+import { ChatCompletionMessageInput, ChatCompletionPort } from "ports";
 import { chatCompletion as openAiChatCompletion } from "infrastructure/openAi";
 import { chatCompletion as anthropicChatCompletion } from "infrastructure/anthropic";
 import {
   createExecution,
   createMessage,
+  findMessagesByConversationId,
   findUniqueByConversationId,
   findUniqueByModelId,
   updateConversation,
@@ -56,7 +57,6 @@ export const streamMessage = async ({
   const createdExecutionId = await createExecution({
     modelId,
     status: ExecutionStatus.Running,
-    metadata: {},
   });
 
   const createdUserMessageId = await createMessage({
@@ -73,26 +73,34 @@ export const streamMessage = async ({
     latestMessageId: createdUserMessageId,
   });
 
+  const conversationMessages = await findMessagesByConversationId({
+    conversationId,
+  });
+
+  conversationMessages.reverse();
+
   const chatCompletionFn = chatCompletionByModelProvider(model.provider);
   const chatCompletionResponse = await chatCompletionFn({
     modelId,
-    messages: [
-      {
-        role: MessageRole.User,
-        text,
-      },
-    ],
+    messages: conversationMessages.map<ChatCompletionMessageInput>(message => ({
+      role: message.role,
+      text: message.text ?? "",
+    })),
   });
 
   await updateExecutionStatus({
     id: createdExecutionId,
     status: ExecutionStatus.Completed,
+    inputTokens: chatCompletionResponse.usage.inputTokens,
+    outputTokens: chatCompletionResponse.usage.outputTokens,
+    totalUsageTokens: chatCompletionResponse.usage.totalTokens,
   });
 
   const createdModelMessageId = await createMessage({
     executionId: createdExecutionId,
     parentId: createdUserMessageId,
     author: MessageAuthor.Model,
+    authorId: modelId,
     role: chatCompletionResponse.message.role,
     text: chatCompletionResponse.message.text,
   });
